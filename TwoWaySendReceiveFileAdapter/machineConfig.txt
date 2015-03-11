@@ -1,0 +1,10 @@
+﻿  <system.serviceModel>
+    <extensions>
+      <bindingElementExtensions>
+        <add name="twoWaySendReceiveFileAdapter" type="TwoWaySendReceiveFileAdapter.TwoWaySendReceiveFileAdapterBindingElementExtension, TwoWaySendReceiveFileAdapter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=76ee44eb08530f0e" />
+      </bindingElementExtensions>
+      <bindingExtensions>
+        <add name="twoWaySendReceiveFileAdapterBinding" type="TwoWaySendReceiveFileAdapter.TwoWaySendReceiveFileAdapterBindingCollectionElement,TwoWaySendReceiveFileAdapter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=76ee44eb08530f0e" />
+      </bindingExtensions>
+    </extensions>
+  </system.serviceModel>
