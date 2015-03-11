@@ -40,19 +40,21 @@ namespace TwoWaySendReceiveFileAdapter
         private Message CreateRequestMessage(Message requestMessage)
         {
             string propertiesToPromoteKey = "http://schemas.microsoft.com/BizTalk/2006/01/Adapters/WCF-properties/WriteToContext";
-
-            XmlReader reader = requestMessage.GetReaderAtBodyContents();
+            Message message = null;
 
             // write outbound to folder
-            using (XmlWriter writer = XmlWriter.Create(File.Create(_connection.ConnectionFactory.Adapter.SendOutboundFilePath)))
+            using (var reader = requestMessage.GetReaderAtBodyContents())
+            using (var fileStream = File.Create(_connection.ConnectionFactory.Adapter.SendOutboundFilePath))
+            using (var writer = XmlWriter.Create(fileStream))
             {
                 writer.WriteNode(reader, true);
             }
 
             // read inbound from source
-            reader = new XmlTextReader(_connection.ConnectionFactory.Adapter.ReceiveInboundFilePath);
+            XmlReader readerResponse = new XmlTextReader(_connection.ConnectionFactory.Adapter.ReceiveInboundFilePath);
 
-            Message message = Message.CreateMessage(MessageVersion.Default, requestMessage.Headers.Action, reader);
+            message = Message.CreateMessage(MessageVersion.Default, requestMessage.Headers.Action, readerResponse);
+            
             List<KeyValuePair<XmlQualifiedName, object>> propertiesToPromote = new List<KeyValuePair<XmlQualifiedName, object>>();
 
             if (_connection.ConnectionFactory.Adapter.PreserveProperties)
@@ -74,7 +76,7 @@ namespace TwoWaySendReceiveFileAdapter
                             || (propertyNamespace == "http://schemas.microsoft.com/BizTalk/2003/system-properties" && propertyName == "Operation")))
                         {
                             XmlQualifiedName qualifiedName = new XmlQualifiedName(propertyName, propertyNamespace);
-                            propertiesToPromote.Add(new KeyValuePair<XmlQualifiedName, object>(qualifiedName, property.Value));
+                            //propertiesToPromote.Add(new KeyValuePair<XmlQualifiedName, object>(qualifiedName, property.Value));
                         }
                     }
 
