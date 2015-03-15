@@ -37,31 +37,31 @@ namespace TwoWaySendReceiveFileAdapter
             }
         }
 
-        [ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.SendOutboundFilePath)]
+        [ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.SendOutboundPath)]
         [System.ComponentModel.Category("Adapter Properties")]
-        public string SendOutboundFilePath
+        public string SendOutboundPath
         {
             get
             {
-                return ((string)base[TwoWaySendReceiveFileAdapterConfigurationStrings.SendOutboundFilePath]);
+                return ((string)base[TwoWaySendReceiveFileAdapterConfigurationStrings.SendOutboundPath]);
             }
             set
             {
-                base[TwoWaySendReceiveFileAdapterConfigurationStrings.SendOutboundFilePath] = value;
+                base[TwoWaySendReceiveFileAdapterConfigurationStrings.SendOutboundPath] = value;
             }
         }
 
-        [ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.ReceiveInboundFilePath)]
+        [ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.ReceiveInboundPath)]
         [System.ComponentModel.Category("Adapter Properties")]
-        public string ReceiveInboundFilePath
+        public string ReceiveInboundPath
         {
             get
             {
-                return ((string)(base[TwoWaySendReceiveFileAdapterConfigurationStrings.ReceiveInboundFilePath]));
+                return ((string)(base[TwoWaySendReceiveFileAdapterConfigurationStrings.ReceiveInboundPath]));
             }
             set
             {
-                base[TwoWaySendReceiveFileAdapterConfigurationStrings.ReceiveInboundFilePath] = value;
+                base[TwoWaySendReceiveFileAdapterConfigurationStrings.ReceiveInboundPath] = value;
             }
         }
 
@@ -95,8 +95,8 @@ namespace TwoWaySendReceiveFileAdapter
             {
                 ConfigurationPropertyCollection properties = base.Properties;
                 properties.Add(new ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.PreserveProperties, typeof(int), TwoWaySendReceiveFileAdapterConfigurationDefaults.DefaultPreserveProperties));
-                properties.Add(new ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.SendOutboundFilePath, typeof(string)));
-                properties.Add(new ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.ReceiveInboundFilePath, typeof(string)));
+                properties.Add(new ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.SendOutboundPath, typeof(string)));
+                properties.Add(new ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.ReceiveInboundPath, typeof(string)));
                 return properties;
             }
         }
@@ -121,8 +121,8 @@ namespace TwoWaySendReceiveFileAdapter
             base.ApplyConfiguration(bindingElement);
             TwoWaySendReceiveFileAdapter adapter = ((TwoWaySendReceiveFileAdapter)(bindingElement));
             adapter.PreserveProperties = this.PreserveProperties;
-            adapter.SendOutboundFilePath = this.SendOutboundFilePath;
-            adapter.ReceiveInboundFilePath = this.ReceiveInboundFilePath;
+            adapter.SendOutboundPath = this.SendOutboundPath;
+            adapter.ReceiveInboundPath = this.ReceiveInboundPath;
 
         }
 
@@ -135,8 +135,8 @@ namespace TwoWaySendReceiveFileAdapter
             base.InitializeFrom(bindingElement);
             TwoWaySendReceiveFileAdapter adapter = ((TwoWaySendReceiveFileAdapter)(bindingElement));
             this.PreserveProperties = adapter.PreserveProperties;
-            this.SendOutboundFilePath = adapter.SendOutboundFilePath;
-            this.ReceiveInboundFilePath = adapter.ReceiveInboundFilePath;
+            this.SendOutboundPath = adapter.SendOutboundPath;
+            this.ReceiveInboundPath = adapter.ReceiveInboundPath;
         }
 
         /// <summary>
@@ -148,8 +148,8 @@ namespace TwoWaySendReceiveFileAdapter
             base.CopyFrom(from);
             TwoWaySendReceiveFileAdapterBindingElementExtension source = ((TwoWaySendReceiveFileAdapterBindingElementExtension)(from));
             this.PreserveProperties = source.PreserveProperties;
-            this.SendOutboundFilePath = source.SendOutboundFilePath;
-            this.ReceiveInboundFilePath = source.ReceiveInboundFilePath;
+            this.SendOutboundPath = source.SendOutboundPath;
+            this.ReceiveInboundPath = source.ReceiveInboundPath;
         }
 
         #endregion Overriden Base Class Methods
@@ -161,8 +161,8 @@ namespace TwoWaySendReceiveFileAdapter
     public class TwoWaySendReceiveFileAdapterConfigurationStrings
     {
         internal const string PreserveProperties = "preserveProperties";
-        internal const string SendOutboundFilePath = "sendOutboundFilePath";
-        internal const string ReceiveInboundFilePath = "receiveInboundFilePath";
+        internal const string SendOutboundPath = "SendOutboundPath";
+        internal const string ReceiveInboundPath = "ReceiveInboundPath";
     }
 
     /// <summary>
@@ -171,7 +171,7 @@ namespace TwoWaySendReceiveFileAdapter
     public class TwoWaySendReceiveFileAdapterConfigurationDefaults
     {
         internal const bool DefaultPreserveProperties = false;
-        internal const string DefaultSendOutboundFilePath = "";
-        internal const string DefaultReceiveInboundFilePath = "";
+        internal const string DefaultSendOutboundPath = "";
+        internal const string DefaultReceiveInboundPath = "";
     }
 }

@@ -16,6 +16,13 @@ namespace TwoWaySendReceiveFileAdapter
         private MetadataLookup _metadataLookup;
 
         /// <summary>
+        ///  List of files already read
+        /// </summary>
+        private static HashSet<string> readFiles = new HashSet<string>();
+
+        private DateTime lastTimeResponseIsRead = DateTime.Now;
+
+        /// <summary>
         /// Initializes a new instance of the TwoWaySendReceiveFileAdapterOutboundHandler class
         /// </summary>
         public TwoWaySendReceiveFileAdapterOutboundHandler(TwoWaySendReceiveFileAdapterConnection connection, MetadataLookup metadataLookup)
@@ -33,26 +40,33 @@ namespace TwoWaySendReceiveFileAdapter
         /// <param name="timeout">The timeout for the operation</param>
         /// <returns>the response message, null if there was no response</returns>
         public Message Execute(Message message, TimeSpan timeout)
-        {
+        {   
             return CreateRequestMessage(message);
         }
 
         private Message CreateRequestMessage(Message requestMessage)
         {
+            // Reset lastTimeResponseIsRead if timespan is greater than 30 minutes
+            ResetResponseReadTimer();
+
             string propertiesToPromoteKey = "http://schemas.microsoft.com/BizTalk/2006/01/Adapters/WCF-properties/WriteToContext";
             Message message = null;
+            string requestTargetPath = string.Format("{0}{1}{2}.xml",
+                _connection.ConnectionFactory.Adapter.SendOutboundPath,
+                DateTime.Now.ToString("yyyyMMddHHmmss"),
+                Guid.NewGuid().ToString());
+            
 
             // write outbound to folder
             using (var reader = requestMessage.GetReaderAtBodyContents())
-            using (var fileStream = File.Create(_connection.ConnectionFactory.Adapter.SendOutboundFilePath))
+            using (var fileStream = File.Create(requestTargetPath))
             using (var writer = XmlWriter.Create(fileStream))
             {
                 writer.WriteNode(reader, true);
             }
 
             // read inbound from source
-            XmlReader readerResponse = new XmlTextReader(_connection.ConnectionFactory.Adapter.ReceiveInboundFilePath);
-
+            XmlReader readerResponse = new XmlTextReader(GetNextResponseMessage(_connection.ConnectionFactory.Adapter.ReceiveInboundPath));
             message = Message.CreateMessage(MessageVersion.Default, requestMessage.Headers.Action, readerResponse);
             
             List<KeyValuePair<XmlQualifiedName, object>> propertiesToPromote = new List<KeyValuePair<XmlQualifiedName, object>>();
@@ -76,7 +90,7 @@ namespace TwoWaySendReceiveFileAdapter
                             || (propertyNamespace == "http://schemas.microsoft.com/BizTalk/2003/system-properties" && propertyName == "Operation")))
                         {
                             XmlQualifiedName qualifiedName = new XmlQualifiedName(propertyName, propertyNamespace);
-                            //propertiesToPromote.Add(new KeyValuePair<XmlQualifiedName, object>(qualifiedName, property.Value));
+                            propertiesToPromote.Add(new KeyValuePair<XmlQualifiedName, object>(qualifiedName, property.Value));
                         }
                     }
 
@@ -87,10 +101,6 @@ namespace TwoWaySendReceiveFileAdapter
 
             return message;
         }
-
-
-
-
         #endregion IOutboundHandler Members
 
         #region IDisposable
@@ -107,5 +117,34 @@ namespace TwoWaySendReceiveFileAdapter
         {
             // disposed
         }
+
+        /// <summary>
+        /// Reset timer
+        /// </summary>
+        private void ResetResponseReadTimer()
+        {
+            if (lastTimeResponseIsRead > lastTimeResponseIsRead.AddMinutes(15))
+            {
+                readFiles = new HashSet<string>();
+            }
+        }
+
+        private string GetNextResponseMessage(string path)
+        {
+            var fileList = Directory.GetFiles(path);
+            Array.Sort<string>(fileList);
+
+            foreach (string filePath in fileList)
+            {
+                if (!readFiles.Contains(filePath))
+                {
+                    lastTimeResponseIsRead = DateTime.Now;
+                    return filePath;
+                }
+            }
+
+            throw new ApplicationException("Two-way Send-Receive File Adapter has read all files in the directory.  Rename the files or reset BizTalk server to clear the tracked files read.");
+        }
+
     }
 }

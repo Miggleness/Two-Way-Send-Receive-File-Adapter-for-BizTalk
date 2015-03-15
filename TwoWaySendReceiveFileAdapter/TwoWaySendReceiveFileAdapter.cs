@@ -22,8 +22,8 @@ namespace TwoWaySendReceiveFileAdapter
         #region Custom Generated Fields
 
         private bool _preserveProperties;
-        private string _sendOutboundFilePath;
-        private string _receiveInboundFilePath;
+        private string _SendOutboundPath;
+        private string _ReceiveInboundPath;
         
         #endregion Custom Generated Fields
 
@@ -43,8 +43,8 @@ namespace TwoWaySendReceiveFileAdapter
             : base(binding)
         {
             this.PreserveProperties = binding.PreserveProperties;
-            this.SendOutboundFilePath = binding.SendOutboundFilePath;
-            this.ReceiveInboundFilePath = binding.ReceiveInboundFilePath;
+            this.SendOutboundPath = binding.SendOutboundPath;
+            this.ReceiveInboundPath = binding.ReceiveInboundPath;
             // adapter settings
             this.Settings.Metadata.GenerateWsdlDocumentation = true;
         }
@@ -66,29 +66,29 @@ namespace TwoWaySendReceiveFileAdapter
             }
         }
 
-        [System.Configuration.ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.SendOutboundFilePath)]
-        public string SendOutboundFilePath
+        [System.Configuration.ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.SendOutboundPath)]
+        public string SendOutboundPath
         {
             get
             {
-                return this._sendOutboundFilePath;
+                return this._SendOutboundPath;
             }
             set
             {
-                this._sendOutboundFilePath = value;
+                this._SendOutboundPath = value;
             }
         }
 
-        [System.Configuration.ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.ReceiveInboundFilePath)]
-        public string ReceiveInboundFilePath
+        [System.Configuration.ConfigurationProperty(TwoWaySendReceiveFileAdapterConfigurationStrings.ReceiveInboundPath)]
+        public string ReceiveInboundPath
         {
             get
             {
-                return this._receiveInboundFilePath;
+                return this._ReceiveInboundPath;
             }
             set
             {
-                this._receiveInboundFilePath = value;
+                this._ReceiveInboundPath = value;
             }
         }
 
