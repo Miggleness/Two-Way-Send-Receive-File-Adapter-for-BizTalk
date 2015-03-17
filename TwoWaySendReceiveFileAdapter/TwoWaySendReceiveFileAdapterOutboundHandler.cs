@@ -50,6 +50,7 @@ namespace TwoWaySendReceiveFileAdapter
             ResetResponseReadTimer();
 
             string propertiesToPromoteKey = "http://schemas.microsoft.com/BizTalk/2006/01/Adapters/WCF-properties/WriteToContext";
+            string interchangeID = (requestMessage.Properties["http://schemas.microsoft.com/BizTalk/2003/system-properties#InterchangeID"] != null) ? requestMessage.Properties["http://schemas.microsoft.com/BizTalk/2003/system-properties#InterchangeID"].ToString() : null;
             Message message = null;
             string requestTargetPath = string.Format("{0}{1}{2}.xml",
                 _connection.ConnectionFactory.Adapter.SendOutboundPath,
@@ -66,7 +67,7 @@ namespace TwoWaySendReceiveFileAdapter
             }
 
             // read inbound from source
-            XmlReader readerResponse = new XmlTextReader(GetNextResponseMessage(_connection.ConnectionFactory.Adapter.ReceiveInboundPath));
+            XmlReader readerResponse = new XmlTextReader(GetNextResponseMessage(_connection.ConnectionFactory.Adapter.ReceiveInboundPath, interchangeID));
             message = Message.CreateMessage(MessageVersion.Default, requestMessage.Headers.Action, readerResponse);
             
             List<KeyValuePair<XmlQualifiedName, object>> propertiesToPromote = new List<KeyValuePair<XmlQualifiedName, object>>();
@@ -129,16 +130,21 @@ namespace TwoWaySendReceiveFileAdapter
             }
         }
 
-        private string GetNextResponseMessage(string path)
+        private string GetNextResponseMessage(string path, string interchangeID)
         {
             var fileList = Directory.GetFiles(path);
+            
             Array.Sort<string>(fileList);
 
             foreach (string filePath in fileList)
             {
-                if (!readFiles.Contains(filePath))
+                // build identifier based on the interchange ID and file path
+                var fileIdentifier = filePath + interchangeID;
+
+                if (!readFiles.Contains(fileIdentifier))
                 {
                     lastTimeResponseIsRead = DateTime.Now;
+                    readFiles.Add(fileIdentifier);
                     return filePath;
                 }
             }
